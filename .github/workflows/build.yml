@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        vector_db_provider: [pinecone, weaviate, zilliz, milvus, qdrant, redis, llamaindex, chroma, azure, supabase, postgres]
+        vector_db_provider: [pinecone, weaviate, zilliz, milvus, qdrant, redis, llamaindex, chroma, azure, supabase, postgres, analyticdb]
 
     continue-on-error: true
 
