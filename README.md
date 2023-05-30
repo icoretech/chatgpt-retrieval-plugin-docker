@@ -31,7 +31,7 @@ For example, to pull the Pinecone optimized image, use `pinecone-<commit_sha>-<t
 
 You can find the available tags on the [GitHub Packages page](https://github.com/icoretech/chatgpt-retrieval-plugin-docker/pkgs/container/chatgpt-retrieval-plugin-docker) for this repository.
 
-While it is possible to run images as-is without customization, it is strongly recommended to do so in environments where you can properly configure and manage the runtime, such as Helm or Docker Compose setups or if you are an implementator.
+While it is possible to run images as-is without customization, it is strongly recommended to do so in environments where you can properly configure and manage the runtime, such as [Helm](https://github.com/icoretech/helm/tree/main/charts/chatgpt-retrieval-plugin) or Docker Compose setups or if you are an implementator.
 
 ## 📋 Example
 
