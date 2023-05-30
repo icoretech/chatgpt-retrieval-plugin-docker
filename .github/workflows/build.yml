@@ -1,0 +1,96 @@
+name: Build and publish
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        vector_db_provider: [pinecone, weaviate, zilliz, milvus, qdrant, redis, llamaindex, chroma, azure, supabase, postgres]
+
+    continue-on-error: true
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - uses: rssnyder/ghcr-artifact-store@0.1.0
+        with:
+          tag: artifacts-${{ matrix.vector_db_provider }}
+          artifact: REVISION
+          token: ${{ secrets.PACKAGES_PAT }}
+
+      - name: Tag
+        id: tag
+        run: |
+          git clone --branch main --depth 1 https://github.com/openai/chatgpt-retrieval-plugin.git
+          REPO_COMMIT_SHA=$(git --git-dir=chatgpt-retrieval-plugin/.git rev-parse --short HEAD)
+          PREVIOUS_COMMIT_SHA=$(cat REVISION || echo "")
+          if [ "$REPO_COMMIT_SHA" = "$PREVIOUS_COMMIT_SHA" ]; then
+            echo "No new commits. Skipping."
+            echo "{skipped}={true}" >> $GITHUB_OUTPUT
+            echo $REPO_COMMIT_SHA > REVISION
+            exit 78
+          fi
+          VERSION="${{ matrix.vector_db_provider }}-$REPO_COMMIT_SHA-$(date +%s)"
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo $REPO_COMMIT_SHA > REVISION
+          python -m pip install --upgrade pip
+          pip install toml
+          python remove_unused_dependencies.py ${{ matrix.vector_db_provider }}
+
+      - uses: rssnyder/ghcr-artifact-store@0.1.0
+        with:
+          method: PUT
+          tag: artifacts-${{ matrix.vector_db_provider }}
+          artifact: REVISION
+          token: ${{ secrets.PACKAGES_PAT }}
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        if: ${{ steps.tag.outputs.skipped != 'true' }}
+        uses: docker/metadata-action@v4
+        with:
+          images: ghcr.io/icoretech/chatgpt-retrieval-plugin-docker
+          labels: |
+            io.artifacthub.package.category=ai-machine-learning
+            io.artifacthub.package.keywords=openai,chatgpt
+            io.artifacthub.package.license=MIT
+            io.artifacthub.package.maintainers=[{"name":"Claudio Poli","email":"claudio@icorete.ch"}]
+            io.artifacthub.package.readme-url=https://github.com/icoretech/chatgpt-retrieval-plugin-docker/blob/main/README.md
+            org.opencontainers.image.description=chatgpt-retrieval-plugin
+            org.opencontainers.image.source=https://github.com/icoretech/chatgpt-retrieval-plugin-docker
+            org.opencontainers.image.title=chatgpt-retrieval-plugin
+            org.opencontainers.image.vendor=iCoreTech, Inc.
+          tags: |
+            type=raw,value=${{ env.VERSION }}
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        if: ${{ steps.tag.outputs.skipped != 'true' }}
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.PACKAGES_PAT }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v4
+        if: ${{ steps.tag.outputs.skipped != 'true' }}
+        with:
+          context: chatgpt-retrieval-plugin
+          platforms: linux/amd64
+          # platforms: linux/amd64,linux/arm64
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          provenance: false
