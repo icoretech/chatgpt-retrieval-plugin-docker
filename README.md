@@ -33,7 +33,7 @@ You can find the available tags on the [GitHub Packages page](https://github.com
 
 While it is possible to run images as-is without customization, it is strongly recommended to do so in environments where you can properly configure and manage the runtime, such as [Helm](https://github.com/icoretech/helm/tree/main/charts/chatgpt-retrieval-plugin) or Docker Compose setups or if you are an implementator.
 
-## 📋 Example
+## 📋 Examples
 
 ```Dockerfile
 # example/Dockerfile.custom
@@ -51,6 +51,25 @@ COPY config/logo.png /code/.well-known/logo.png
 COPY config/openapi.yaml /code/.well-known/openapi.yaml
 COPY config/ai-plugin.json /code/.well-known/ai-plugin.json
 ```
+
+```yaml
+# docker-compose.yml
+name: mychatgpt
+
+services:
+  chatgpt-retrieval-plugin:
+    image: ghcr.io/icoretech/chatgpt-retrieval-plugin-docker:weaviate-9969191-1685433328
+    environment:
+      - DATASTORE=weaviate
+      - BEARER_TOKEN=5841c60f9371441121997f95c1c5f3673c10b3e4
+      - OPENAI_API_KEY=sk-xxxxxx
+      - WEAVIATE_URL=http://weaviate:8080
+    volumes:
+      - ./path/to/custom/logo.png:/code/.well-known/logo.png
+      - ./path/to/custom/openapi.yaml:/code/.well-known/openapi.yaml
+      - ./path/to/custom/ai-plugin.json:/code/.well-known/ai-plugin.json
+```
+
 
 ## 📄 License
 
