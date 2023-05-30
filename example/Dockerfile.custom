@@ -1,0 +1,14 @@
+# Dockerfile.custom
+# docker build -t chatgpt-retrieval-plugin-docker:custom -f Dockerfile.custom .
+FROM ghcr.io/icoretech/chatgpt-retrieval-plugin-docker:redis-9969191-1685433326
+
+# Set the necessary environment variables
+ENV DATASTORE redis
+ENV BEARER_TOKEN 5841c60f9371441121997f95c1c5f3673c10b3e4
+ENV OPENAI_API_KEY sk-xxxxxx
+ENV REDIS_HOST myredishost
+# ...
+
+COPY config/logo.png ./well-known/logo.png
+COPY config/openapi.yaml ./well-known/openapi.yaml
+COPY config/ai-plugin.json ./well-known/ai-plugin.json
