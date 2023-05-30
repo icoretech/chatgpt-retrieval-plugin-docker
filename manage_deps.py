@@ -16,7 +16,7 @@ def remove_unused_dependencies(provider):
         "azure": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "llama-index", "redis", "chromadb", "supabase", "psycopg2", "psycopg2cffi", "pgvector"],
         "supabase": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "llama-index", "azure-identity", "azure-search-documents", "psycopg2", "psycopg2cffi", "pgvector"],
         "postgres": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "llama-index", "azure-identity", "azure-search-documents", "supabase"],
-        "analyticdb": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "llama-index", "azure-identity", "azure-search-documents", "supabase"]
+        "analyticdb": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "pgvector"]
     }
 
     # Read the pyproject.toml file
