@@ -45,9 +45,9 @@ ENV OPENAI_API_KEY sk-xxxxxx
 ENV REDIS_HOST myredishost
 # ...
 
-COPY config/logo.png ./well-known/logo.png
-COPY config/openapi.yaml ./well-known/openapi.yaml
-COPY config/ai-plugin.json ./well-known/ai-plugin.json
+COPY config/logo.png /code/.well-known/logo.png
+COPY config/openapi.yaml /code/.well-known/openapi.yaml
+COPY config/ai-plugin.json /code/.well-known/ai-plugin.json
 ```
 
 ## 📄 License
