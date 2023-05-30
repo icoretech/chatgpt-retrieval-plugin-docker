@@ -32,10 +32,30 @@ def remove_unused_dependencies(provider):
         toml.dump(content, file)
 
 
+def add_dependency_if_not_present(package, version):
+    # Read the pyproject.toml file
+    with open("chatgpt-retrieval-plugin/pyproject.toml", "r") as file:
+        content = toml.load(file)
+
+    # Check if the package is already present in the dependencies
+    if "dependencies" not in content["tool"]["poetry"]:
+        content["tool"]["poetry"]["dependencies"] = {}
+
+    dependencies = content["tool"]["poetry"]["dependencies"]
+    if package not in dependencies:
+        dependencies[package] = version
+
+    # Write the modified content back to the file
+    with open("chatgpt-retrieval-plugin/pyproject.toml", "w") as file:
+        toml.dump(content, file)
+
+
 if __name__ == "__main__":
     if len(sys.argv) != 2:
-        print("Usage: python remove_unused_dependencies.py <provider>")
+        print("Usage: python manage_deps.py <provider>")
         sys.exit(1)
 
     provider = sys.argv[1]
     remove_unused_dependencies(provider)
+    # for https://github.com/openai/chatgpt-retrieval-plugin/issues/292#issuecomment-1568588920
+    add_dependency_if_not_present("loguru", ">=0.5.0")

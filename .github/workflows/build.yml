@@ -47,7 +47,7 @@ jobs:
           echo $REPO_COMMIT_SHA > REVISION
           python -m pip install --upgrade pip
           pip install toml
-          python remove_unused_dependencies.py ${{ matrix.vector_db_provider }}
+          python manage_deps.py ${{ matrix.vector_db_provider }}
 
       - uses: rssnyder/ghcr-artifact-store@0.1.0
         with:
