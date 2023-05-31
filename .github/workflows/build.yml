@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        vector_db_provider: [pinecone, weaviate, zilliz, milvus, qdrant, redis, llamaindex, chroma, azure, supabase, postgres, analyticdb]
+        provider: [pinecone, weaviate, zilliz, milvus, qdrant, redis, llamaindex, chroma, azure, supabase, postgres, analyticdb]
 
     continue-on-error: true
 
@@ -26,7 +26,7 @@ jobs:
 
       - uses: rssnyder/ghcr-artifact-store@0.1.0
         with:
-          tag: artifacts-${{ matrix.vector_db_provider }}
+          tag: artifacts-${{ matrix.provider }}
           artifact: REVISION
           token: ${{ secrets.PACKAGES_PAT }}
 
@@ -42,17 +42,17 @@ jobs:
             echo $REPO_COMMIT_SHA > REVISION
             exit 78
           fi
-          VERSION="${{ matrix.vector_db_provider }}-$REPO_COMMIT_SHA-$(date +%s)"
+          VERSION="${{ matrix.provider }}-$REPO_COMMIT_SHA-$(date +%s)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo $REPO_COMMIT_SHA > REVISION
           python -m pip install --upgrade pip
           pip install toml
-          python manage_deps.py ${{ matrix.vector_db_provider }}
+          python manage_deps.py ${{ matrix.provider }}
 
       - uses: rssnyder/ghcr-artifact-store@0.1.0
         with:
           method: PUT
-          tag: artifacts-${{ matrix.vector_db_provider }}
+          tag: artifacts-${{ matrix.provider }}
           artifact: REVISION
           token: ${{ secrets.PACKAGES_PAT }}
 
