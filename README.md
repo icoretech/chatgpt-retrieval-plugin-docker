@@ -10,13 +10,13 @@ The build system automates the process of pulling the latest code from the main 
 
 ## 🚀 Supported Vector Database Providers
 
-The build system creates optimized images for the following vector database providers:
+The build system creates optimized AMD64 images for the following vector database providers:
 
 [![Matrix Badge](https://github-actions.40ants.com/icoretech/chatgpt-retrieval-plugin-docker/matrix.svg)](https://github.com/icoretech/chatgpt-retrieval-plugin-docker/actions/workflows/build.yml)
 
 ## 💡 Usage
 
-The idea is to use these images as a base to further customize your running instances.
+The idea is to use these images as a base to further customize your running instances and to perform CLI commands via `scripts`.
 
 To pull a Docker image, use the following command:
 
