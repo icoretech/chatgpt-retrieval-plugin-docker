@@ -1,5 +1,3 @@
-/chatgpt-retrieval-plugin
 .DS_Store
-push.sh
-scripts/
-Dockerfile.init
+/chatgpt-retrieval-plugin
+/scripts
