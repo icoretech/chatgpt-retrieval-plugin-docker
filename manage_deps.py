@@ -59,4 +59,4 @@ if __name__ == "__main__":
     provider = sys.argv[1]
     remove_unused_dependencies(provider)
     # for https://github.com/openai/chatgpt-retrieval-plugin/issues/292#issuecomment-1568588920
-    add_dependency_if_not_present("loguru", ">=0.5.0")
+    # add_dependency_if_not_present("loguru", ">=0.5.0")
