@@ -38,9 +38,9 @@ jobs:
           PREVIOUS_COMMIT_SHA=$(cat REVISION || echo "")
           if [ "$REPO_COMMIT_SHA" = "$PREVIOUS_COMMIT_SHA" ]; then
             echo "No new commits. Skipping."
-            echo "{skipped}={true}" >> $GITHUB_OUTPUT
+            echo "skipped=true" >> $GITHUB_OUTPUT
             echo $REPO_COMMIT_SHA > REVISION
-            exit 78
+            exit 0
           fi
           VERSION="${{ matrix.provider }}-$REPO_COMMIT_SHA-$(date +%s)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
