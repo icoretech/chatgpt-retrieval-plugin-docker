@@ -24,11 +24,15 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
-      - uses: rssnyder/ghcr-artifact-store@0.1.0
+      - name: AWS CLI v2
+        uses: imehedi/actions-awscli-v2@latest
+        continue-on-error: true
         with:
-          tag: artifacts-${{ matrix.provider }}
-          artifact: REVISION
-          token: ${{ secrets.PACKAGES_PAT }}
+          args: s3 cp s3://${{ vars.SC_ARTIFACTS_BUCKET }}/chatgpt-retrieval-plugin-docker/${{ matrix.provider }}/REVISION . --endpoint-url ${{ vars.SC_AMS_AWS_ENDPOINT }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.SC_AWS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SC_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "nl-ams"
 
       - name: Tag
         id: tag
@@ -49,12 +53,14 @@ jobs:
           pip install toml
           python manage_deps.py ${{ matrix.provider }}
 
-      - uses: rssnyder/ghcr-artifact-store@0.1.0
+      - name: AWS CLI v2
+        uses: imehedi/actions-awscli-v2@latest
         with:
-          method: PUT
-          tag: artifacts-${{ matrix.provider }}
-          artifact: REVISION
-          token: ${{ secrets.PACKAGES_PAT }}
+          args: s3 cp REVISION s3://${{ vars.SC_ARTIFACTS_BUCKET }}/chatgpt-retrieval-plugin-docker/${{ matrix.provider }}/REVISION --endpoint-url ${{ vars.SC_AMS_AWS_ENDPOINT }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.SC_AWS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SC_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "nl-ams"
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
