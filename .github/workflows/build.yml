@@ -33,6 +33,10 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.SC_AWS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SC_AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "nl-ams"
+          
+      - name: Set permissions for REVISION
+        run: |
+          chmod 644 REVISION
 
       - name: Tag
         id: tag
