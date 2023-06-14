@@ -33,10 +33,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.SC_AWS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SC_AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "nl-ams"
-          
-      - name: Set permissions for REVISION
-        run: |
-          chmod 644 REVISION
 
       - name: Tag
         id: tag
@@ -44,15 +40,16 @@ jobs:
           git clone --branch main --depth 1 https://github.com/openai/chatgpt-retrieval-plugin.git
           REPO_COMMIT_SHA=$(git --git-dir=chatgpt-retrieval-plugin/.git rev-parse --short HEAD)
           PREVIOUS_COMMIT_SHA=$(cat REVISION || echo "")
+          mkdir temp/
           if [ "$REPO_COMMIT_SHA" = "$PREVIOUS_COMMIT_SHA" ]; then
             echo "No new commits. Skipping."
             echo "skipped=true" >> $GITHUB_OUTPUT
-            echo $REPO_COMMIT_SHA > REVISION
+            echo $REPO_COMMIT_SHA > temp/REVISION
             exit 0
           fi
           VERSION="${{ matrix.provider }}-$REPO_COMMIT_SHA-$(date +%s)"
           echo "VERSION=$VERSION" >> $GITHUB_ENV
-          echo $REPO_COMMIT_SHA > REVISION
+          echo $REPO_COMMIT_SHA > temp/REVISION
           python -m pip install --upgrade pip
           pip install toml
           python manage_deps.py ${{ matrix.provider }}
@@ -60,7 +57,7 @@ jobs:
       - name: AWS CLI v2
         uses: imehedi/actions-awscli-v2@latest
         with:
-          args: s3 cp REVISION s3://${{ vars.SC_ARTIFACTS_BUCKET }}/chatgpt-retrieval-plugin-docker/${{ matrix.provider }}/REVISION --endpoint-url ${{ vars.SC_AMS_AWS_ENDPOINT }}
+          args: s3 cp temp/REVISION s3://${{ vars.SC_ARTIFACTS_BUCKET }}/chatgpt-retrieval-plugin-docker/${{ matrix.provider }}/REVISION --endpoint-url ${{ vars.SC_AMS_AWS_ENDPOINT }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.SC_AWS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SC_AWS_SECRET_ACCESS_KEY }}
