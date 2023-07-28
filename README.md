@@ -6,7 +6,7 @@
 
 The build system automates the process of pulling the latest code from the main branch of the ChatGPT Retrieval Plugin project, packaging it into a Docker image, and publishing the image. The images are optimized for different vector database providers, resulting in improved performance and reduced image size.
 
-⚡️ **New**: We now have a Helm chart available for deploying the ChatGPT Retrieval Plugin! Check it out [here](https://github.com/icoretech/helm) for easy deployment and management of the plugin.
+⚡️ We also maintain a [Helm chart for deploying the ChatGPT Retrieval Plugin](https://github.com/icoretech/helm) for quick deploys.
 
 ## 🚀 Supported Vector Database Providers
 
