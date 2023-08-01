@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        provider: [pinecone, weaviate, zilliz, milvus, qdrant, redis, llamaindex, chroma, azure, supabase, postgres, analyticdb]
+        provider: [pinecone, weaviate, zilliz, milvus, qdrant, redis, llamaindex, chroma, azure, supabase, postgres, analyticdb, elasticsearch]
 
     continue-on-error: true
 
