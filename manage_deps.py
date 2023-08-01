@@ -1,44 +1,47 @@
 import toml
 import sys
 
+# Define the dependencies for each provider
+DEPENDENCIES = {
+    "pinecone": ["weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "weaviate": ["pinecone-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "zilliz": ["pinecone-client", "weaviate-client", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "milvus": ["pinecone-client", "weaviate-client", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "qdrant": ["pinecone-client", "weaviate-client", "pymilvus", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "redis": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "chroma": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "llamaindex": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "azure": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "supabase": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
+    "postgres": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "elasticsearch"],
+    "analyticdb": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "pgvector", "elasticsearch"],
+    "elasticsearch": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector"]
+}
 
-def remove_unused_dependencies(provider):
-    # Define the dependencies for each provider
-    dependencies = {
-        "pinecone": ["weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "weaviate": ["pinecone-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "zilliz": ["pinecone-client", "weaviate-client", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "milvus": ["pinecone-client", "weaviate-client", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "qdrant": ["pinecone-client", "weaviate-client", "pymilvus", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "redis": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "chroma": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "llamaindex": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "azure": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "supabase": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
-        "postgres": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "elasticsearch"],
-        "analyticdb": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2",    "pgvector", "elasticsearch"],
-        "elasticsearch": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector"]
-    }
 
-    # Read the pyproject.toml file
-    with open("chatgpt-retrieval-plugin/pyproject.toml", "r") as file:
+def read_toml(file_path):
+    with open(file_path, "r") as file:
         content = toml.load(file)
+    return content
 
-    # Remove the unused dependencies
-    for dependency in dependencies[provider]:
-        if dependency in content["tool"]["poetry"]["dependencies"]:
-            del content["tool"]["poetry"]["dependencies"][dependency]
 
-    # Write the modified content back to the file
-    with open("chatgpt-retrieval-plugin/pyproject.toml", "w") as file:
+def write_toml(file_path, content):
+    with open(file_path, "w") as file:
         toml.dump(content, file)
 
 
-def add_dependency_if_not_present(package, version):
-    # Read the pyproject.toml file
-    with open("chatgpt-retrieval-plugin/pyproject.toml", "r") as file:
-        content = toml.load(file)
+def remove_unused_dependencies(provider, content):
+    if provider not in DEPENDENCIES:
+        print(f"Provider {provider} not found.")
+        sys.exit(1)
 
+    # Remove the unused dependencies
+    for dependency in DEPENDENCIES[provider]:
+        if dependency in content["tool"]["poetry"]["dependencies"]:
+            del content["tool"]["poetry"]["dependencies"][dependency]
+
+
+def add_dependency_if_not_present(package, version, content):
     # Check if the package is already present in the dependencies
     if "dependencies" not in content["tool"]["poetry"]:
         content["tool"]["poetry"]["dependencies"] = {}
@@ -47,10 +50,6 @@ def add_dependency_if_not_present(package, version):
     if package not in dependencies:
         dependencies[package] = version
 
-    # Write the modified content back to the file
-    with open("chatgpt-retrieval-plugin/pyproject.toml", "w") as file:
-        toml.dump(content, file)
-
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
@@ -58,6 +57,8 @@ if __name__ == "__main__":
         sys.exit(1)
 
     provider = sys.argv[1]
-    remove_unused_dependencies(provider)
-    # for https://github.com/openai/chatgpt-retrieval-plugin/issues/292#issuecomment-1568588920
-    # add_dependency_if_not_present("loguru", ">=0.5.0")
+    file_path = "chatgpt-retrieval-plugin/pyproject.toml"
+    content = read_toml(file_path)
+    remove_unused_dependencies(provider, content)
+    # add_dependency_if_not_present("loguru", ">=0.5.0", content)
+    write_toml(file_path, content)
