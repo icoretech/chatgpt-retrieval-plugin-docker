@@ -1,8 +1,9 @@
 import toml
 import sys
+from typing import Dict, List, Any
 
-# Define the dependencies for each provider
-DEPENDENCIES = {
+# Define the dependencies to be removed for each provider
+DEPENDENCIES: Dict[str, List[str]] = {
     "pinecone": ["weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
     "weaviate": ["pinecone-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
     "zilliz": ["pinecone-client", "weaviate-client", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
@@ -19,18 +20,18 @@ DEPENDENCIES = {
 }
 
 
-def read_toml(file_path):
+def read_toml(file_path: str) -> Dict[str, Any]:
     with open(file_path, "r") as file:
         content = toml.load(file)
     return content
 
 
-def write_toml(file_path, content):
+def write_toml(file_path: str, content: Dict[str, Any]) -> None:
     with open(file_path, "w") as file:
         toml.dump(content, file)
 
 
-def remove_unused_dependencies(provider, content):
+def remove_unused_dependencies(provider: str, content: Dict[str, Any]) -> None:
     if provider not in DEPENDENCIES:
         print(f"Provider {provider} not found.")
         sys.exit(1)
@@ -41,7 +42,7 @@ def remove_unused_dependencies(provider, content):
             del content["tool"]["poetry"]["dependencies"][dependency]
 
 
-def add_dependency_if_not_present(package, version, content):
+def add_dependency_if_not_present(package: str, version: str, content: Dict[str, Any]) -> None:
     # Check if the package is already present in the dependencies
     if "dependencies" not in content["tool"]["poetry"]:
         content["tool"]["poetry"]["dependencies"] = {}
