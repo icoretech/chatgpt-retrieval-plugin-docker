@@ -23,23 +23,30 @@ DEPENDENCIES: Dict[str, List[str]] = {
 def read_toml(file_path: str) -> Dict[str, Any]:
     with open(file_path, "r") as file:
         content = toml.load(file)
+    print(f"Read content from {file_path}.")
     return content
 
 
 def write_toml(file_path: str, content: Dict[str, Any]) -> None:
     with open(file_path, "w") as file:
         toml.dump(content, file)
+    print(f"Written changes to {file_path}.")
 
 
 def remove_unused_dependencies(provider: str, content: Dict[str, Any]) -> None:
     if provider not in DEPENDENCIES:
-        print(f"Provider {provider} not found.")
-        sys.exit(1)
+        raise ValueError(f"Provider {provider} not found.")
+
+    removed_deps = []
 
     # Remove the unused dependencies
     for dependency in DEPENDENCIES[provider]:
         if dependency in content["tool"]["poetry"]["dependencies"]:
             del content["tool"]["poetry"]["dependencies"][dependency]
+            removed_deps.append(dependency)
+
+    print(
+        f"Removed {len(removed_deps)} dependencies for provider {provider}: {', '.join(removed_deps)}")
 
 
 def add_dependency_if_not_present(package: str, version: str, content: Dict[str, Any]) -> None:
@@ -50,6 +57,10 @@ def add_dependency_if_not_present(package: str, version: str, content: Dict[str,
     dependencies = content["tool"]["poetry"]["dependencies"]
     if package not in dependencies:
         dependencies[package] = version
+        print(f"Added dependency: {package} with version {version}")
+    else:
+        print(
+            f"Dependency {package} already exists with version {dependencies[package]}")
 
 
 if __name__ == "__main__":
