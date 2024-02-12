@@ -16,7 +16,8 @@ DEPENDENCIES: Dict[str, List[str]] = {
     "supabase": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
     "postgres": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "elasticsearch"],
     "analyticdb": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "pgvector", "elasticsearch"],
-    "elasticsearch": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector"]
+    "elasticsearch": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "azure-identity", "azure-search-documents", "supabase", "psycopg2", "psycopg2cffi", "pgvector"],
+    "azurecosmosdb": ["pinecone-client", "weaviate-client", "pymilvus", "qdrant-client", "redis", "chromadb", "llama-index", "supabase", "psycopg2", "psycopg2cffi", "pgvector", "elasticsearch"],
 }
 
 
